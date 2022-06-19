@@ -30,17 +30,25 @@ app.listen('5002', () => {
   console.log(`Talk with ${consumer_ip}`);
 });
 
+const reconnect = () => {
+  axios.post(`http://${consumer_ip}:5001/stream`, rs).catch(() => {
+    console.log('\n------------Reconnect------------\n');
+    reconnect();
+  });
+};
+
 const connectInterval = setInterval(async () => {
   try {
     const response = await axios.get(`http://${consumer_ip}:5001/health`);
     console.log(response.data);
 
-    axios.post(`http://${consumer_ip}:5001/stream`, rs);
     stdin.addListener("data", text => {
       rs.resume();
       rs.push(text);
       rs.pause();
     });
+
+    reconnect();
 
     clearInterval(connectInterval);
   } catch (error) {
