@@ -44,7 +44,7 @@ const connectInterval = setInterval(async () => {
 
     stdin.addListener("data", text => {
       rs.resume();
-      rs.push(text);
+      rs.push(`-> ${text}`);
       rs.pause();
     });
 

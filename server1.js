@@ -41,9 +41,10 @@ const connectInterval = setInterval(async () => {
   try {
     const response = await axios.get(`http://${consumer_ip}:5002/health`);
     console.log(response.data);
+
     stdin.addListener("data", text => {
       rs.resume();
-      rs.push(text);
+      rs.push(`-> ${text}`);
       rs.pause();
     });
 
