@@ -22,14 +22,28 @@ app.post('/stream', req => {
   req.pipe(process.stdout);
 });
 
+app.get('/health', (_req, res) => {
+  res.status(200).send('Host is Active');
+});
+
 app.listen('5001', () => {
   console.log(`Talk with ${consumer_ip}`);
 });
 
-axios.post(`http://${consumer_ip}:5002/stream`, rs)
+const connectInterval = setInterval(async () => {
+  try {
+    const response = await axios.get(`http://${consumer_ip}:5002/health`);
+    console.log(response.data);
 
-stdin.addListener("data", text => {
-  rs.resume();
-  rs.push(text);
-  rs.pause();
-});
+    axios.post(`http://${consumer_ip}:5002/stream`, rs);
+    stdin.addListener("data", text => {
+      rs.resume();
+      rs.push(text);
+      rs.pause();
+    });
+
+    clearInterval(connectInterval);
+  } catch (error) {
+    console.log(`${consumer_ip} is not online`);
+  }
+}, 1000);
