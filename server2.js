@@ -37,7 +37,7 @@ const reconnect = () => {
   });
 };
 
-const connectInterval = setInterval(async () => {
+const handshake = async () => {
   try {
     const response = await axios.get(`http://${consumer_ip}:5001/health`);
     console.log(response.data);
@@ -49,9 +49,10 @@ const connectInterval = setInterval(async () => {
     });
 
     reconnect();
-
-    clearInterval(connectInterval);
   } catch (error) {
     console.log(`${consumer_ip} is not online`);
+    setTimeout(handshake, 1000);
   }
-}, 1000);
+};
+
+handshake();
