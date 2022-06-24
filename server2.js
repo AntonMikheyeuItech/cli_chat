@@ -1,9 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const { networkInterfaces } = require('os');
 const { Readable } = require('stream');
 const { consumer_ip } = require('./settings.json');
 const stdin = process.openStdin();
+
+const myNetworkIp = Object.values(networkInterfaces())[1][0].address;
+
+console.log(`IP in your network is ${myNetworkIp}`);
 
 const rs = new Readable();
 rs.setEncoding('utf8');
